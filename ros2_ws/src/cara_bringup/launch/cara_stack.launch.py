@@ -42,14 +42,22 @@ def generate_launch_description():
             output="screen",
         ),
 
-        # 3) (Optional, later) Head/Ears expression node
-        # Node(
-        #     package="cara_motion_control",
-        #     executable="head_expression_node",
-        #     name="head_expression_node",
-        #     output="screen",
-        #     parameters=[{"serial_port": "/dev/ttyAMA0"}],
-        # ),
+        # 3) ( later) Head/Ears expression node
+	Node(
+   	 package="cara_motion_control",
+   	 executable="head_expression_node",
+   	 name="head_expression_node",
+   	 output="screen",
+   	 parameters=[{
+     	   "use_jetson_gpio": False,
+     	   "arduino_port": "/dev/ttyAMA0",
+     	   "arduino_baud": 9600,
+     	   "jetson_motor_pin": 33,
+     	   "jetson_eyes_pin": 12,
+    	}],
+	)
+ 
+	)
 
         # 4) (Optional, later) IMU node
         # Node(

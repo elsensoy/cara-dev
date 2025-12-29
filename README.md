@@ -36,7 +36,7 @@ Emotion detection (ViT-based) feeds into this loop **only as a modifier**, affec
 
 ---
 
-## 3. Emotion as a Control Signal (Condensed)
+## 3. Emotion as a Control Signal 
 
 Rather than driving discrete actions (“blink”, “tilt”), emotional state is represented as a **low-dimensional continuous vector**:
 
@@ -371,9 +371,9 @@ These constraints are mirrored during RL training so that real-world safety does
 
 Locomotion is not isolated from Cara’s affective system.
 
-* “Happy” → higher stride energy, upright posture
-* “Sad” → reduced speed, forward pitch
-* “Curious” → head-led balance shifts
+* “Happy” -> higher stride energy, upright posture
+* “Sad” -> reduced speed, forward pitch
+* “Curious”-> head-led balance shifts
 
 ---
  
