@@ -249,7 +249,7 @@ This avoids “puppeteering” and instead produces **emergent expressive motion
 
 ---
 
-## 2. ROS 2 Architecture: Sense → Think → Act
+## 2. ROS 2 Architecture: Sense -> Think -> Act
 
 Cara’s real-world walking controller runs on a **Jetson Orin Nano**, using ROS 2 to mirror the same structure used in simulation.
 
@@ -397,7 +397,7 @@ Locomotion is not isolated from Cara’s affective system.
 
 ---
  
-### Mechanical Bill of Materials (mBOM) — Cara 20-DoF Teddy Skeleton
+### Mechanical Bill of Materials (mBOM) - Cara 20-DoF Teddy Skeleton
 
 ## A. Printed Parts (CAD / 3D-Printed)
 
