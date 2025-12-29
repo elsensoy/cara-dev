@@ -80,7 +80,7 @@ Since we are using a Jetson Orin Nano Super, our primary goal is protecting the 
 
 #### The "Isolation" Diagram:
  
-
+```
 [ 12V LiPo Battery ] 
       |
       +-----> [ High-Current 5V/6V BEC ] ------> [ PCA9685 Power Terminal ]
@@ -90,7 +90,7 @@ Since we are using a Jetson Orin Nano Super, our primary goal is protecting the 
                                                  [ I2C SDA/SCL Pins ]
                                                          |
                                                  [ PCA9685 Logic Pins ]
-
+```
 **CRITICAL: Connect the Ground (GND) of the BEC to the GND of the Jetson.**
 
 # Locomotion, Balance, and IMU Integration
@@ -200,7 +200,7 @@ Under the hood, a PCA9685 ros2_control hardware plugin translates joint targets 
 
 ---
 
-# Wiring, Power, and Safety (Condensed but Serious)
+# Wiring, Power, and Safety 
 
 ## 8. Power & Grounding
 
@@ -220,7 +220,7 @@ Failure to do this causes unstable PWM and IMU noise.
 These constraints exist **in both simulation and hardware**, preventing policy shock during deployment.
  
  
-#### 🐻 Cara Locomotion & Embodied Emotion
+## 🐻 Cara Locomotion & Embodied Emotion
 
 ### Walking, Balance, and Sim-to-Real Training in Isaac Sim
 
@@ -332,7 +332,7 @@ A core design principle of Cara is that **the same policy runs in simulation and
 5. **Map outputs** directly to servo angles
 
 ```text
-Isaac Sim  →  ROS 2 Topics  →  ONNX Policy  →  PCA9685  →  Servos
+Isaac Sim   ->  ROS 2 Topics    ->   ONNX Policy    ->  PCA9685    ->   Servos
 ```
 
 No animation layers, no hand-coded gaits.
