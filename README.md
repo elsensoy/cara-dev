@@ -57,7 +57,7 @@ This keeps balance guarantees intact while allowing expressive variation.
 (Details of emotion learning and ViT adaptation are documented in `emotion.md`.)
 
 ---
-3D CAD model of a 20-DoF humanoid teddy bear robot skeleton. Design follows research-grade joint standards: 3-axis waist (pitch/yaw/roll), two 3-DoF shoulders, two 3-DoF hips, a 3-axis neck, and 1-DoF expressive ears. No tail. The rounded mid-body must include a precise mounting cradle for a Jetson Orin Nano Super and a LiPo battery. Focus on functional mechanical geometry: recessed pockets for standard servos, internal wire-routing channels, and reinforced bolt-hole patterns. Skeleton should have ergonomic, rounded edges to fit inside a plush fabric shell. Ensure the mesh is manifold, 3D-printable, and optimized for high-torque motion and stability. Proportions: wide torso, sturdy leg-base, and expressive head mount.
+3D CAD model of a 20-DoF humanoid teddy bear robot skeleton. Design follows research-grade joint standards: 3-axis waist (pitch/yaw/roll), two 3-DoF shoulders, two 3-DoF hips, a 3-axis neck, and 1-DoF expressive ears. No tail. The rounded mid-body must include a precise mounting cradle for a Jetson Orin Nano Super and a LiPo battery. Focus is on functional mechanical geometry: recessed pockets for standard servos, internal wire-routing channels, and reinforced bolt-hole patterns. Skeleton should have ergonomic, rounded edges to fit inside a plush fabric shell. The mesh is manifold, 3D-printable, and optimized for high-torque motion and stability. Proportions: wide torso, sturdy leg-base, and expressive head mount.
 
 
 #### Mechanical Strategy for Cara
