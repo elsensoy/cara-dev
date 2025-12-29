@@ -387,7 +387,7 @@ The Health Monitor should act as the "Whistleblower." It doesn't move the servos
 
 **Body Node (Motion):** Sees the "critical" status and switches the RL policy to a "Low Energy Mode" or a sitting position to let the Jetson cool down.
     
-## 8. Emotional Locomotion (What Makes Cara Different)
+## 8. Emotional Locomotion
 
 Locomotion is not isolated from Cara’s affective system.
 
