@@ -10,7 +10,7 @@ Rather than treating emotion, memory, and motion as separate subsystems, Cara is
 ```
 Perception -> Internal State -> Motion Policy -> Body -> Feedback
 ```
-https://github.com/user-attachments/assets/25d42eb1-b08c-4937-a84a-9ca46d19efc0
+https://github.com/user-attachments/assets/e023d652-621f-4e27-8c53-0dc29c00cf4d
 
 *media/videos/cara_walk_mesh.webm*
 
