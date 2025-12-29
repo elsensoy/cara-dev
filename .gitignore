@@ -19,7 +19,7 @@ log/
 install/
 build/
 utilities/
-
+media/blender/
 # ROS2 workspace ignores
 ros2_ws/build/
 ros2_ws/install/
