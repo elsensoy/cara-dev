@@ -109,8 +109,15 @@ Walking is trained in **Isaac Lab** as a reinforcement learning problem where ba
 **Actions**
 
 * Joint position targets (mapped 1:1 to servos)
+```
+Parameter,Value (Servo),Effect on Cara
+Stiffness (kp​),400 - 800,"Higher = more ""rigid"" and aggressive walking. Lower = ""softer"" waddle."
+Damping (kd​),10 - 40,Prevents the 3D-printed limbs from vibrating after a fast move.
+Effort,2.5 - 5.0 Nm,Limits how much force the sim-robot can use (don't exceed real servo torque!).
+Friction,0.05,"Simulates the internal drag of the metal gears and the ""fur"" friction."
+```
 
-**Key Design Choice**
+**Design Choice**
 
 > The simulation runs at the **same control frequency (50 Hz)** as the physical robot, allowing direct policy transfer.
 
@@ -309,16 +316,14 @@ Walking requires balance. Balance requires a sense of gravity.
 
 Cara uses a **BNO055 IMU**, chosen specifically for its onboard sensor fusion. Rather than learning from raw accelerometer noise, the policy observes **clean orientation estimates** (roll, pitch, yaw).
 
-### Why This Matters
+#### 2. Evaluating the "Character" Response
 
-* RL training is dramatically more stable
-* Sim-to-real transfer succeeds with minimal retuning
-* Emotional postures (e.g., slouching when sad) remain physically valid
+Since Cara is a teddy bear, her recovery should look "cute" but functional.
 
-In simulation, **noise is injected** into IMU readings (domain randomization) so the real sensor feels “familiar” to the policy at deployment.
+- The Waddle: If she takes small, fast steps to recover, kp​ (Stiffness) is likely well-tuned.
 
----
-
+- The "Homeostasis" Feedback: During a push, the torques will spike. This is the perfect time to test if the Body Node triggers the "Scared" or "Sad" expression on the head. In the sim, we should see the thermal_penalty increase momentarily.
+https://www.youtube.com/watch?v=TMHkFDhVt7g
 ## 5. Sim-to-Real: One Brain, Two Worlds
 
 A core design principle of Cara is that **the same policy runs in simulation and on hardware**.
@@ -354,8 +359,14 @@ Cara’s body uses **20 high-DOF servos**, driven by two PCA9685 boards:
 ---
 
 ## 7. Safety & Self-Preservation
+| Component               | Estimated Mass (g)         | Location    |
+|------------------------ | ---------------------------| ----------- |
+|Jetson Orin Nano Super   |	~150g (with heatsink)  | Low Torso   |
+|2S LiPo Battery (5000mAh)|	~250g	               | Lowest Torso|
+|20 Metal Gear Servos     |     ~1,100g (55g each)     | Distributed |
+|3D Printed Skeleton/Shell|	~500g	               | Distributed |
+|Total Target Mass  	  |     ~2,000g (2.0kg) 
 
-Cara is not trained to ignore physics — she is trained to **care about it**.
 
 ### Built-In Safeguards
 
@@ -366,7 +377,16 @@ Cara is not trained to ignore physics — she is trained to **care about it**.
 These constraints are mirrored during RL training so that real-world safety does not surprise the policy.
 
 ---
+### Health Monitor
 
+The Health Monitor should act as the "Whistleblower." It doesn't move the servos itself; it publishes a "distress signal" that other nodes listen to.
+
+**Health Node:** Notices the Orin Nano is at 75°C. It publishes String: "critical" to /cara/homeostasis_status.
+
+**Head Node:** Sees the "critical" status and immediately triggers the "Sad/Tired" expression (drooping ears).
+
+**Body Node (Motion):** Sees the "critical" status and switches the RL policy to a "Low Energy Mode" or a sitting position to let the Jetson cool down.
+    
 ## 8. Emotional Locomotion (What Makes Cara Different)
 
 Locomotion is not isolated from Cara’s affective system.

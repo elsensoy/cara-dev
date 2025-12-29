@@ -5,8 +5,13 @@
 
   <link name="torso">
     <inertial>
-      <mass value="2.5"/> <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+      <mass value="1.2"/> 
+      <origin xyz="0.0 0.0 -0.05" rpy="0 0 0"/> 
+      <inertia ixx="0.005" ixy="0" ixz="0" iyy="0.005" iyz="0" izz="0.003"/>
     </inertial>
+    <visual>
+      <geometry><mesh filename="package://cara_description/meshes/torso.obj"/></geometry>
+    </visual>
   </link>
 
   <joint name="base_to_torso" type="fixed">
@@ -14,13 +19,34 @@
     <child link="torso"/>
   </joint>
 
-  <xacro:macro name="waist_joint" params="suffix axis">
-    <joint name="waist_${suffix}" type="revolute">
-      <parent link="torso"/>
-      <child link="waist_link_${suffix}"/>
-      <axis xyz="${axis}"/>
-      <limit lower="-0.7" upper="0.7" effort="10" velocity="1.0"/>
-    </joint>
-  </xacro:macro>
+  <link name="thigh_l">
+    <inertial>
+      <mass value="0.2"/> <origin xyz="0 0 -0.1"/>
+      <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+    </inertial>
+  </link>
 
-  </robot>
+  <joint name="hip_pitch_joint" type="revolute">
+    <parent link="torso"/>
+    <child link="thigh_l"/>
+    <origin xyz="0.05 0.1 -0.05" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="2.5" velocity="6.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+
+  <ros2_control name="CaraHardwareInterface" type="system">
+    <hardware>
+      <plugin>pca9685_hardware_interface/PCA9685System</plugin>
+      </hardware>
+    
+    <joint name="hip_pitch_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <param name="kp">400.0</param> 
+      <param name="kd">10.0</param>
+    </joint>
+    
+    </ros2_control>
+
+</robot>

@@ -23,7 +23,20 @@ class CaraLocomotionCfg(ManagerBasedRLEnvCfg):
 
         # 4. REWARDS: The "Brain" of the operation
         self.rewards.track_lin_vel = RewTerm(func=track_lin_vel_exp, weight=1.0) # Walk forward!
-        self.rewards.homeostasis = RewTerm(func=thermal_penalty, weight=-0.5) # Don't overheat!
-        
-        
-        
+	self.rewards.expressive_waddle = RewTerm(func=expressive_waddle_reward, weight=0.2)
+	self.rewards.track_lin_vel = RewTerm(func=track_lin_vel_exp, weight=1.0)
+	self.rewards.homeostasis = RewTerm(func=thermal_penalty, weight=-0.4)
+	
+    def expressive_waddle_reward(env):
+    	# 1. Encourage Torso Roll (The "Waddle" side-to-side)
+   	 # We reward the robot for having a rhythmic roll velocity
+   	 torso_roll_vel = env.scene.robot.data.body_ang_vel_w[:, 0, 0] # Torso link, X-axis
+   	 waddle_reward = torch.abs(torso_roll_vel)
+    
+    	# 2. Shoulder-Hip Sync (Expressive arms)
+   	 # We reward arm movement that scales with leg movement
+    	arm_vel = torch.norm(env.scene.robot.data.joint_vel[:, SHOULDER_INDICES], dim=1)
+    	leg_vel = torch.norm(env.scene.robot.data.joint_vel[:, HIP_INDICES], dim=1)
+  	sync_reward = arm_vel * leg_vel # Arms move more when legs move more
+    
+   	 return waddle_reward + (0.5 * sync_reward)
