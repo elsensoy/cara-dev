@@ -37,7 +37,7 @@ Because 20 joints are a lot to type, we use **Xacro** (XML Macros) to keep the c
 
 ### 2. Linking Sim to Real (The "Nervous System" Map)
 
-Once we have this URDF, we need to map the **Joint Names** to your **PCA9685 Channels**. This is done in a ROS 2 hardware configuration file.
+Once we have this URDF, we need to map the **Joint Names** to **PCA9685 Channels**. This is done in a ROS 2 hardware configuration file.
 
 | URDF Joint Name | Board | PCA9685 Pin | Hardware Purpose |
 | --- | --- | --- | --- |
@@ -48,7 +48,6 @@ Once we have this URDF, we need to map the **Joint Names** to your **PCA9685 Cha
 By naming them clearly in the URDF, Reinforcement Learning policy in Isaac Sim can simply output a "Target Angle" for `waist_pitch`, and  ROS 2 node will automatically send that signal to **Board 0x40, Pin 0**.
 
 ---
-
 ### 3. Implementing Homeostasis in Simulation
 
 To teach Cara to "care" about her temperature (like the Olaf robot), we add a **Thermal Penalty** to the Isaac Lab reward function.

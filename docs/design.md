@@ -7,7 +7,7 @@ Since we are using the Jetson Orin Nano Super, we have significant compute power
 
    *Weight Distribution:* To keep Cara stable while walking or moving, the Orin Nano and the battery should be placed as low as possible in the "belly" of the bear. This lowers the Center of Gravity (CoG).
 
-    *Thermal Venting:* Even though she’s a teddy bear, the Orin Nano Super generates heat. Your MeshAI output might need manual "slats" or a small 5V fan mount added to the back of the skeleton to prevent the plush fur from trapping too much heat.
+    *Thermal Venting:* Even though she’s a teddy bear, the Orin Nano Super generates heat. cad design might need manual "slats" or a small 5V fan mount added to the back of the skeleton to prevent the plush fur from trapping too much heat.
 
     *Servo Selection:* For the 20-joint setup, I recommend using high-torque metal gear servos for the waist and hips, as they will support the entire weight of the Orin and the upper body.
 
@@ -18,7 +18,7 @@ By assigning 2 servos to the ears, we can program "moods" (e.g., ears pinned bac
 
 Safety First: The Orin Nano Super Wiring
 
-Since you are using a Jetson Orin Nano Super, your primary goal is protecting the carrier board from "back-EMF" (voltage spikes) from those 20 servos.
+Using a Jetson Orin Nano Super, the primary goal is protecting the carrier board from "back-EMF" (voltage spikes) from those 20 servos.
 
 The "Isolation" Diagram:
 Plaintext

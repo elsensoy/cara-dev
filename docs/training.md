@@ -26,18 +26,18 @@ Bash
 python isaaclab.sh -p scripts/reinforcement_learning/rsl_rl/play.py --task Isaac-Velocity-Rough-Cara-v0 --checkpoint logs/rsl_rl/cara_task/model_final.pt --export
 ```
 
-This will create an exported/policy.onnx file in that same folder. This is the file you copy onto Cara's Jetson.
+This will create an exported/policy.onnx file in that same folder. This is the file copy onto Cara's Jetson.
 ---
 
 ### 3. Running it on the Orin Nano Super
 
-To bridge the "Sim-to-Real" gap, you will use a small Python node on the Jetson that:
+To bridge the "Sim-to-Real" gap, will use a small Python node on the Jetson that:
 
     Reads Observations: Gets the current angle of the 20 servos + the IMU (gyroscope) data.
 
     Inference: Feeds that data into the .onnx policy.
 
-    Actions: Sends the output target angles to your PCA9685 boards.
+    Actions: Sends the output target angles to the PCA9685 boards.
 
 ### 4. Important: The "Observation Space"
 
@@ -49,7 +49,7 @@ For Cara to "feel" she is falling, the policy needs specific inputs. In Isaac La
 
     joint_pos / joint_vel: The state of all 20 servos.
 
-    thermal_state: (For your homeostasis goal) The calculated heat of the motors.
+    thermal_state: (For homeostasis goal) The calculated heat of the motors.
 
 ### Homeostasis "Secret Sauce"
 Train on "stamina." not just walking. If we want Cara to be aware of her temperature, pass a "Virtual Thermometer" value into the policy during training. If the value gets too high, the policy learns to "limp" or sit down to "cool off."

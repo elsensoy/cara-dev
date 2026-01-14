@@ -10,7 +10,7 @@ WTo make **Cara** walk, she needs to "feel" gravity and her own momentum. This r
 
 ### 1. Wiring the BNO055 to the Jetson Orin Nano
 
-Since we are already using the  bus for your PCA9685 servo drivers, what we can do is to  simply "daisy-chain" the IMU onto the same pins. The Jetson can talk to multiple devices on the same wires as long as they have different addresses (PCA9685 is `0x40`, BNO055 is usually `0x28`).
+Since we are already using the  bus for PCA9685 servo drivers, what we can do is to  simply "daisy-chain" the IMU onto the same pins. The Jetson can talk to multiple devices on the same wires as long as they have different addresses (PCA9685 is `0x40`, BNO055 is usually `0x28`).
 
 | BNO055 Pin | Jetson Orin Nano Pin | Note |
 | --- | --- | --- |
@@ -78,7 +78,7 @@ In **Isaac Lab**, virtual Cara has a "perfect" IMU. In the real world, the BNO05
 
 ---
 
-### 4. Integrating with your Arduino Head
+### 4. Integrating with Arduino Head
 
 Since **Arduino Nano** controls the head (blinking/ears), we can send the IMU's "Tilt" data from the Jetson to the Arduino over Serial. If Cara tips forward too fast, the Arduino can trigger a "Scared/Wide-eyed" expression automatically!
  
