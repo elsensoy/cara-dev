@@ -505,4 +505,11 @@ Locomotion is not isolated from Cara’s affective system.
 | Sanding + deburring kit        | Smooth plush-contact edges                     |
 
 
+## SERVO LIMITS 
 
+|Joint Group|Lower (rad)    |Upper (rad)      |  Degree Equivalent  |    Reason                                         |
+| ----------|---------------|-----------------|---------------------|---------------------------------------------------|
+|Hips (Pitch)|-1.0          |      1.0        |         ±57∘        |Prevents the thigh from hitting the belly.         |
+|Waist (Roll)|-0.5          |      0.5        |         ±28∘        |Keeps the Center of Mass stable for the Orin Nano. |
+|Neck (Pitch)|-0.7          |      0.4        |     −40∘ to +23∘    |Prevents the heavy head from toppling Cara forward.|
+|Shoulders   |-1.57         |      1.57       |         ±90∘        |Allows for full expressive waving gestures.        |

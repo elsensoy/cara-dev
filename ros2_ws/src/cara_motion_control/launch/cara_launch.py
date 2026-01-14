@@ -39,7 +39,7 @@ def generate_launch_description():
         package='cara_motion_control',
         executable='head_expression_node',
         name='head_expression_node',
-        parameters=[{'use_jetson_gpio': False, 'arduino_port': '/dev/ttyAMA0'}]
+        parameters=[{'use_jetson_gpio': False, 'arduino_port': '/dev/ttyAMA0', 'arduino_baud':'9600'}]
     )
 # Inside generate_launch_description in cara_launch.py
 

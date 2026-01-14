@@ -14,7 +14,7 @@ kit1 = ServoKit(channels=16, address=0x41)
 policy = ort.InferenceSession("cara_policy.onnx")
 
 def get_observations():
-    # In a real build, you'd pull this from your IMU and Encoder feedback
+    # In a real build, we'd pull this from your IMU and Encoder feedback
     # For now, we'll use a placeholder vector of 48 inputs (typical for RL)
     return np.random.randn(1, 48).astype(np.float32)
 

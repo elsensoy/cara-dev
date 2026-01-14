@@ -1,4 +1,4 @@
-#To train Cara using Reinforcement Learning (RL), you need a Python script that defines the Environment, Observations (what #Cara "sees"), and Rewards (what Cara "wants").
+#To train Cara using Reinforcement Learning (RL), a script that defines the Environment, Observations (what #Cara "sees"), and Rewards (what Cara "wants").
 
  
 from isaaclab.envs import ManagerBasedRLEnvCfg
