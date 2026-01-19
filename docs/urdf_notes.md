@@ -26,7 +26,7 @@ Got the head model and the walking animation ready:
         
 ### 2. Implementation: The Sim-to-Real Pipeline
 
-To teach Cara to walk like Olaf, you will follow a "Two-Layer" control strategy:
+To teach Cara to walk like Olaf, will follow a "Two-Layer" control strategy:
 
     The Articulated Backbone (RL): Use NVIDIA Isaac Lab to train a policy for the Hips, Waist, and Neck. These joints handle balance. The reward function will penalize falling and high energy consumption.
 
@@ -35,6 +35,6 @@ To teach Cara to walk like Olaf, you will follow a "Two-Layer" control strategy:
     
 ### 3. Homeostasis: Thermal Awareness
 
-To implement the homeostasis, you can add a Temperature Reward to your Isaac Lab training script.
+To implement the homeostasis, add a Temperature Reward to your Isaac Lab training script.
 
     Disney's Research Trick: They added a "Thermal Model" to the simulation. If a virtual servo stayed at max torque too long, it "overheated" in the sim, and the robot lost points. Eventually, the RL learned a walk cycle that naturally alternates legs to let the motors cool down.
