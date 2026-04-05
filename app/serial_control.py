@@ -1,95 +1,107 @@
- 
 # Set this one variable to 'True' to use Jetson's pins.
 # Set it to 'False' to send commands to the Arduino.
 USE_JETSON_GPIO = False
 
 import atexit
-import time 
-# We only import the libraries we actually need based on the toggle
+import time
+
 if USE_JETSON_GPIO:
     import RPi.GPIO as GPIO
 else:
-    # You may need to run: pip3 install pyserial
     import serial
 
-# Global Placeholders 
-# (These will be filled by the correct init function)
+# Global placeholders
 pwm_motor = None
 arduino_serial = None
 
 # -----------------------------------------------------------------
 # --- SECTION 1: JETSON NANO (GPIO) LOGIC ---
 # -----------------------------------------------------------------
-# (This logic runs if USE_JETSON_GPIO is True)
 
-# --- Jetson Config ---
 # Pin 33 (PWM) for Motor
 # Pin 12 (Digital) for Eyes
-JETSON_MOTOR_PIN = 33 
+JETSON_MOTOR_PIN = 33
 JETSON_EYES_PIN = 12
 
 def _jetson_initialize():
     """
-    Initializes the Jetson's GPIO pins.
+    Initializes the Jetson GPIO pins.
     """
     global pwm_motor
     try:
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BOARD)
-        
-        # Setup Eyes Pin (Digital)
+
         GPIO.setup(JETSON_EYES_PIN, GPIO.OUT, initial=GPIO.LOW)
-        
-        # Setup Motor Pin (PWM)
+
         GPIO.setup(JETSON_MOTOR_PIN, GPIO.OUT, initial=GPIO.LOW)
-        pwm_motor = GPIO.PWM(JETSON_MOTOR_PIN, 100) # 100Hz
-        pwm_motor.start(0) # Start with motor off
-        
-        print(f"--- SUCCESS: Using JETSON GPIO ---")
-        print(f"DEBUG: Board model detected as: {GPIO.model}")
+        pwm_motor = GPIO.PWM(JETSON_MOTOR_PIN, 100)  # 100 Hz
+        pwm_motor.start(0)
+
+        print("--- SUCCESS: Using JETSON GPIO ---")
         print(f"  Motor (PWM) on Pin {JETSON_MOTOR_PIN}")
         print(f"  Eyes (Digital) on Pin {JETSON_EYES_PIN}")
 
     except Exception as e:
-        print(f"--- ERROR: Could not initialize Jetson GPIO! ---")
+        print("--- ERROR: Could not initialize Jetson GPIO! ---")
         print(f"Error: {e}")
-        print("Did you remember to run with 'sudo'?")
-        print("Is your hardware patch in '/usr/lib/...' correct?")
 
 def _jetson_send_emotion(emotion_string):
     """
-    Directly controls the Jetson's pins based on the emotion.
+    Backward-compatible old interface.
+    Maps simple emotion labels to behavior commands.
+    """
+    emotion_string = emotion_string.strip().lower()
+
+    if emotion_string == "happy":
+        _jetson_send_behavior("HEAD:110,BLINK:0")
+    elif emotion_string == "sad":
+        _jetson_send_behavior("HEAD:75,BLINK:1")
+    else:
+        _jetson_send_behavior("HEAD:90,BLINK:0")
+
+def _jetson_send_behavior(command_string):
+    """
+    Executes a behavior command on Jetson GPIO.
+    Example: HEAD:72,BLINK:1
     """
     global pwm_motor
-    
+
     try:
-        if emotion_string == "happy":
-            # Uses 100% power as determined in our tests
-            print("[GPIO]: Happy received -> move head (PWM 100%)")
+        parts = {}
+        for item in command_string.split(','):
+            key, value = item.split(':')
+            parts[key.strip().upper()] = value.strip()
+
+        head = int(parts.get("HEAD", 90))
+        blink = int(parts.get("BLINK", 0))
+
+        # Simple approximation for now
+        if head > 100:
+            print(f"[GPIO]: HEAD up -> PWM burst for angle {head}")
             pwm_motor.ChangeDutyCycle(100)
-            time.sleep(0.5) 
+            time.sleep(0.2)
             pwm_motor.ChangeDutyCycle(0)
-        
-        elif emotion_string == "sad":
-            # This is your "blink" logic from cara.py
-            print(f"[GPIO]: Sad received -> blink eyes (Pin {JETSON_EYES_PIN})")
-            GPIO.output(JETSON_EYES_PIN, GPIO.HIGH)
-            time.sleep(0.3)
-            GPIO.output(JETSON_EYES_PIN, GPIO.LOW)
-        
+        elif head < 80:
+            print(f"[GPIO]: HEAD down -> PWM burst for angle {head}")
+            pwm_motor.ChangeDutyCycle(60)
+            time.sleep(0.2)
+            pwm_motor.ChangeDutyCycle(0)
         else:
-            # Neutral: Make sure everything is off
-            print("[GPIO]: Neutral or unknown -> do nothing")
             pwm_motor.ChangeDutyCycle(0)
+
+        if blink == 1:
+            print("[GPIO]: Blink triggered")
+            GPIO.output(JETSON_EYES_PIN, GPIO.HIGH)
+            time.sleep(0.15)
             GPIO.output(JETSON_EYES_PIN, GPIO.LOW)
-            
+
     except Exception as e:
-        print(f"ERROR: Failed to write to Jetson GPIO pins: {e}")
+        print(f"ERROR: Failed to execute Jetson behavior command: {e}")
 
 def _jetson_cleanup():
     """
     Safely cleans up the Jetson GPIO pins on exit.
-    Includes fixes for known shutdown bugs.
     """
     print("Shutting down and cleaning up Jetson GPIO pins...")
     try:
@@ -97,22 +109,17 @@ def _jetson_cleanup():
             pwm_motor.stop()
         GPIO.cleanup()
         print("Jetson GPIO cleanup complete.")
-    except (OSError, NameError) as e:
-        # Ignore known, harmless shutdown errors
-        print(f"Harmless shutdown warning ignored: {e}")
     except Exception as e:
-        print(f"An error occurred during Jetson GPIO cleanup: {e}")
+        print(f"Jetson cleanup warning: {e}")
 
 
 # -----------------------------------------------------------------
 # --- SECTION 2: ARDUINO NANO (SERIAL) LOGIC ---
 # -----------------------------------------------------------------
-# (This logic runs if USE_JETSON_GPIO is False)
 
-# --- Arduino Config ---
-# Make sure this port is correct! Run 'ls /dev/ttyUSB*'
-#ARDUINO_PORT = '/dev/ttyUSB0' 
-ARDUINO_PORT = '/dev/ttyAMA0'
+# Change this after checking:
+# ls /dev/ttyUSB* /dev/ttyACM* /dev/ttyAMA* 2>/dev/null
+ARDUINO_PORT = '/dev/ttyUSB0'
 ARDUINO_BAUD = 9600
 
 def _arduino_initialize():
@@ -122,43 +129,46 @@ def _arduino_initialize():
     global arduino_serial
     try:
         arduino_serial = serial.Serial(ARDUINO_PORT, ARDUINO_BAUD, timeout=1)
-        # Wait for the Arduino to reset
-        time.sleep(2) 
+        time.sleep(2)  # wait for Arduino reset
         print(f"--- SUCCESS: Using ARDUINO on {ARDUINO_PORT} ---")
     except serial.SerialException as e:
-        print(f"--- ERROR: Could not connect to Arduino! ---")
+        print("--- ERROR: Could not connect to Arduino! ---")
         print(f"Error: {e}")
         print("1. Is the Arduino plugged in?")
-        print(f"2. Is the port correct? (Is it {ARDUINO_PORT}?)")
-        print("3. Did you run 'sudo modprobe ch341'?")
+        print(f"2. Is the port correct? (Currently {ARDUINO_PORT})")
+        print("3. If using CH340, check whether the driver/device is present.")
     except Exception as e:
         print(f"An unknown error occurred during Arduino init: {e}")
 
-
 def _arduino_send_emotion(emotion_string):
     """
-    Sends the correct command byte to the Arduino.
+    Backward-compatible old interface.
+    Maps simple emotion labels to behavior commands.
+    """
+    emotion_string = emotion_string.strip().lower()
+
+    if emotion_string == "happy":
+        _arduino_send_behavior("HEAD:110,BLINK:0")
+    elif emotion_string == "sad":
+        _arduino_send_behavior("HEAD:75,BLINK:1")
+    else:
+        _arduino_send_behavior("HEAD:90,BLINK:0")
+
+def _arduino_send_behavior(command_string):
+    """
+    Sends a full behavior command line to the Arduino.
+    Example: HEAD:72,BLINK:1
     """
     global arduino_serial
-    
+
     if not arduino_serial or not arduino_serial.is_open:
         print("Cannot send command: Arduino is not connected.")
         return
-        
+
     try:
-        if emotion_string == "happy":
-            # 'H' matches your 'arduino.ino' sketch
-            print(f"[Serial]: Happy received -> sending 'H'")
-            arduino_serial.write(b'H') 
-        
-        elif emotion_string == "sad":
-            # 'B' (for Blink) matches your 'arduino.ino' sketch
-            print(f"[Serial]: Sad received -> sending 'B'")
-            arduino_serial.write(b'B')
-            
-        else:
-            print("[Serial]: Neutral or unknown -> sending nothing")
-            
+        line = command_string.strip() + '\n'
+        print(f"[Serial]: Sending -> {line.strip()}")
+        arduino_serial.write(line.encode('utf-8'))
     except Exception as e:
         print(f"ERROR: Failed to write to Arduino serial port: {e}")
 
@@ -172,14 +182,10 @@ def _arduino_cleanup():
         arduino_serial.close()
         print("Arduino port closed.")
 
+
 # -----------------------------------------------------------------
 # --- SECTION 3: PUBLIC WRAPPER FUNCTIONS ---
 # -----------------------------------------------------------------
-#
-#  cara.py script will call THESE functions.
-# They will automatically call the correct Jetson or Arduino
-# function based on the 'USE_JETSON_GPIO' toggle at the top.
-#
 
 def initialize_arduino():
     """
@@ -192,25 +198,31 @@ def initialize_arduino():
 
 def send_emotion_to_arduino(emotion_string):
     """
-    PUBLIC: Sends an emotion command to the chosen controller.
+    PUBLIC: Backward-compatible emotion interface.
     """
     if USE_JETSON_GPIO:
         _jetson_send_emotion(emotion_string)
     else:
         _arduino_send_emotion(emotion_string)
 
+def send_behavior_command(command_string):
+    """
+    PUBLIC: Sends a direct behavior command to the chosen controller.
+    Example: "HEAD:72,BLINK:1"
+    """
+    if USE_JETSON_GPIO:
+        _jetson_send_behavior(command_string)
+    else:
+        _arduino_send_behavior(command_string)
+
 def close_arduino():
     """
     PUBLIC: Cleans up the chosen controller.
-    (This function is registered with atexit).
     """
     if USE_JETSON_GPIO:
         _jetson_cleanup()
     else:
         _arduino_cleanup()
 
-# Automatic Cleanup 
-# This makes sure that 'close_arduino()' is called no matter
-# how your script exits, preventing pins from getting stuck.
+# Automatic cleanup on exit
 atexit.register(close_arduino)
-

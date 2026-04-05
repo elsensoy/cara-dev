@@ -24,6 +24,7 @@ setup(
     license='Apache-2.0',
     entry_points={
         'console_scripts': [
+            'behavior_node = cara_vision_control.behavior_node:main',
             'emotion_node = cara_vision_control.cara_emotion_node:main',
             'servo_pca9685 = cara_vision_control.cara_servo_pca9685_node:main',
             'face_yunet = cara_vision_control.face_yunet_node:main',

@@ -28,18 +28,18 @@ class CaraEmotionNode(Node):
         self.learning_system = InteractiveLearningSystem(self.model)
         self.get_logger().info(f"Model loaded on {self.device}")
 
-        # --- 2. Subscribers ---
+        #  2. Subscribers  
         self.sub = self.create_subscription(Image, '/cara/face_crop', self.process_face, 10)
         self.sub_feedback = self.create_subscription(String, '/cara/feedback', self.handle_feedback, 10)
         self.sub_train = self.create_subscription(Bool, '/cara/train', self.handle_train, 10)
 
-        # --- 3. Publishers ---
+        #  3. publishers  
         self.pub_emotion = self.create_publisher(String, '/cara/emotion', 10)
-        
+        self.pub_emotion_state = self.create_publisher(String, '/cara/emotion_state', 10)
         self.current_frame = None
         self.is_training = False
 
-        # --- 4. MEMORY BUFFER (NEW) ---
+        #  4. MEMORY BUFFER (NEW) 
         # Stores the last 30 face crops (approx 2-3 seconds depending on frame rate)
         self.face_buffer = deque(maxlen=30) 
 
@@ -62,9 +62,16 @@ class CaraEmotionNode(Node):
             if result is None:
                 return
 
-            # Format: "happy (0.85)"
-            emotion_str = f"{result['primary_emotion']} ({result['confidence']:.2f})"
+            label = result['primary_emotion'].strip().lower()
+            confidence = float(result['confidence'])
+
+            # human-readable
+            emotion_str = f"{label} ({confidence:.2f})"
             self.pub_emotion.publish(String(data=emotion_str))
+
+            # machine-friendly
+            emotion_state_str = f"{label},{confidence:.2f}"
+            self.pub_emotion_state.publish(String(data=emotion_state_str))
 
         except Exception as e:
             self.get_logger().warn(f"Inference error: {e}")
@@ -72,9 +79,9 @@ class CaraEmotionNode(Node):
     def handle_feedback(self, msg):
         """
         Receives corrected labels (e.g. 'happy').
-        Saves the ENTIRE buffer (last 3 seconds) to the dataset.
+        Saves the entire buffer (last 3 seconds) to the dataset.
         """
-        label = msg.data.split(':')[-1].strip().lower() # Handle "SAVE:happy" or just "happy"
+        label = msg.data.split(':')[-1].strip().lower() # handle "SAVE:happy" or just "happy"
         
         if label not in self.model.emotion_names:
             self.get_logger().warn(f"Invalid label received: {label}")
