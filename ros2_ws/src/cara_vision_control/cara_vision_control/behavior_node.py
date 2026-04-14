@@ -24,8 +24,8 @@ class CaraBehaviorNode(Node):
         self.latest_conf = 0.0
         self.head_angle = 90.0
 
-        self.timer = self.create_timer(0.15, self.publish_behavior)
-
+        #self.timer = self.create_timer(0.15, self.publish_behavior) too fast
+        self.timer = self.create_timer(0.4, self.publish_behavior)
     def emotion_callback(self, msg):
         try:
             label, conf = msg.data.split(',')
@@ -39,7 +39,7 @@ class CaraBehaviorNode(Node):
             return 90, 0
 
         if self.latest_label == 'sad':
-            return 75, 1
+    	    return 75, 1 if self.latest_conf > 0.7 else 0
         elif self.latest_label == 'happy':
             return 105, 0
         elif self.latest_label == 'surprise':
@@ -51,7 +51,7 @@ class CaraBehaviorNode(Node):
         target, blink = self.map_emotion()
 
         # smoothing
-        self.head_angle = 0.8 * self.head_angle + 0.2 * target
+        self.head_angle = 0.9 * self.head_angle + 0.2 * target
 
         msg = String()
         msg.data = f'HEAD:{int(self.head_angle)},BLINK:{blink}'

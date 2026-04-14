@@ -3,7 +3,7 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
 
-from cara.serial_control import initialize_arduino, send_behavior_command, close_arduino
+from cara_vision_control.serial_control import initialize_arduino, send_behavior_command, close_arduino
 
 class CaraArduinoBridgeNode(Node):
     def __init__(self):

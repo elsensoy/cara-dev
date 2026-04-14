@@ -19,7 +19,7 @@ services:
       - PYTHONPATH=/workspace
       - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
-      - CARA_SERIAL_PORT=/dev/ttyAMA0
+      - CARA_SERIAL_PORT=/dev/ttyCH341USB0
 
     devices:
       # USB CAMERA (C270)
