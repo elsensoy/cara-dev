@@ -14,7 +14,7 @@ class ModelGazeMapper(Node):
     def __init__(self):
         super().__init__("model_gaze_mapper")
 
-        # --- Parameters ---
+        # --- Parameters 
         self.declare_parameter("image_width", 640)
         self.declare_parameter("image_height", 480)
         
@@ -91,8 +91,8 @@ class ModelGazeMapper(Node):
         self.face_y = msg.y
 
     def update(self):
-        # 1. Update Parameters Live (So you can tune without restarting!)
-        # This lets you toggle the invert switch instantly
+        # 1. Update Parameters Live (So you we tune without restarting!)
+        # This lets toggle the invert switch instantly
         invert_yaw = self.get_parameter("invert_yaw_tracking").value
         invert_pitch = self.get_parameter("invert_pitch_tracking").value
         track_gain = self.get_parameter("track_gain").value

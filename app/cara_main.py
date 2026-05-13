@@ -152,7 +152,7 @@ def get_memory_context():
     return context_str
 
 def save_happy_memory(user_text):
-    triggers = ["remember that", "write down that", "save this", "that was so amazing", "this deserves a happy dance","I am so happy"]
+    triggers = ["remember that", "write down that", "save this", "that was so amazing", "this deserves a happy dance","I am so happy","I am so blessed", "I am so grateful"]
     memory_content = user_text
     for t in triggers:
         if t in user_text.lower():

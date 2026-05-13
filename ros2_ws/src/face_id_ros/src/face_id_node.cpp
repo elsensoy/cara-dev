@@ -28,7 +28,7 @@ public:
     db_.load(db_path);
 
     // 3) Publisher for detections
-    // TODO: replace geometry_msgs::msg::Point with your actual detection message type
+    // TODO: replace geometry_msgs::msg::Point with  s actual detection message type
     // det_pub_ = this->create_publisher<geometry_msgs::msg::Point>("/faces/primary_center", 10);
     det_pub_ = this->create_publisher<geometry_msgs::msg::Point>("/faces/primary_center", 10);
 

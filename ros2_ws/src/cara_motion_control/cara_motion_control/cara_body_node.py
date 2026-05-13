@@ -14,7 +14,7 @@ class CaraBodyNode(Node):
 
         # 1. Load the "Brain" exported from lab's RTX 5060
         # the path points to your actual exported ONNX file
-        self.policy = ort.InferenceSession("/workspace/ros2_ws/src/cara_motion_control/cara_policy.onnx"))
+        self.policy = ort.InferenceSession("/workspace/ros2_ws/src/cara_motion_control/cara_policy.onnx")
         
         # 2. State Variables
         self.current_joint_pos = np.zeros(20)  # Fed back from servos or last command

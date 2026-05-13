@@ -43,17 +43,16 @@ def generate_launch_description():
 
         # 2) Face detection / recognition
         Node(
-            package='face_id_ros',
-            executable='face_id_node',
+            package='cara_vision_control',    # <-- Changed to python package
+            executable='face_yunet_node', # <-- Changed to python script
             name='face_id_node',
             output='screen',
             parameters=[{
                 'camera_topic': '/image_raw',
                 'detector_model': yunet,
-                'embedder_model': arc,
-                'db_path': db,
-                'det_thresh': 0.6,
-                'recog_thresh': 0.40,
+                'score_threshold': 0.6,
+                'nms_threshold': 0.3,
+                'top_k': 5000,
                 'use_gpu': False,
             }],
         ),

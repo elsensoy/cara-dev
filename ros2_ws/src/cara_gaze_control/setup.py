@@ -88,7 +88,6 @@ setup(
         # scripts installed into lib/<package_name>
         ('lib/' + package_name, [
             'scripts/model_gaze_mapper',
-            'scripts/face_id_center_bridge',
             'scripts/gaze_debugger',
         ]),
     ],
@@ -96,13 +95,12 @@ setup(
     zip_safe=True,
     maintainer='Elida',
     maintainer_email='elida@umich.edu',
-    description='Model-based gaze tracking controller using face_id_ros + DS dynamics.',
+    description='Model-based gaze tracking controller using DS dynamics.',
     license='MIT',
     # tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'model_gaze_mapper = cara_gaze_control.model_gaze_mapper:main',
-            'face_id_center_bridge = cara_gaze_control.face_id_center_bridge:main',
             'gaze_debugger = cara_gaze_control.gaze_debugger:main',
         ],
     },

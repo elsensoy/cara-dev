@@ -122,7 +122,7 @@ class ServoPCA9685(Node):
         yaw_cmd = msg.data[0]    # radians
         pitch_cmd = msg.data[1]  # radians
 
-        # --- FIX: APPLY DIRECTION SCALING HERE ---
+        #  FIX: APPLY DIRECTION SCALING HERE  
         # If pan_scale is -1.0, positive yaw becomes negative degrees
         # target = Neutral + (Angle * Scale)
         

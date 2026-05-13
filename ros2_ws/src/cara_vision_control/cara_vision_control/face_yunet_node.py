@@ -86,7 +86,7 @@ class FaceYuNetNode(Node):
 
         # 3. Visualization & Logic Loop
         if len(found_faces) > 0:
-            # --- VISUALIZATION LOOP ---
+            #  VISUALIZATION LOOP  
             for face in found_faces:
                 coords = face[:-1].astype(np.int32)
                 cv.rectangle(frame, (coords[0], coords[1]), 
@@ -96,7 +96,7 @@ class FaceYuNetNode(Node):
                 cv.putText(frame, f"{conf:.2f}", (coords[0], coords[1]-10), 
                            cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-            # --- CONTROL LOGIC (BEST FACE) ---
+            #  CONTROL LOGIC (BEST FACE)  
             best_idx = np.argmax(found_faces[:, -1])
             best = found_faces[best_idx]
             x, y, w_box, h_box, *rest = best

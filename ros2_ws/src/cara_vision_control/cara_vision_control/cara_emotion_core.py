@@ -17,7 +17,7 @@ from sklearn.model_selection import GroupShuffleSplit
 from sklearn.metrics import f1_score, accuracy_score
 
 
-# --- 1. DATASET WITH AUGMENTATION ---
+# 1. DATASET WITH AUGMENTATION 
 class PersonalEmotionDataset(Dataset):
     def __init__(self, samples, emotion_names, processor, augment=False):
         self.samples = samples
@@ -62,7 +62,7 @@ class PersonalEmotionDataset(Dataset):
         }
 
 
-# --- 2. THE MODEL CLASS ---
+#   2. THE MODEL CLASS  
 class PersonalizedEmotionViT(nn.Module):
     def __init__(self, num_emotions=7, freeze_base=True, dropout_p=0.25):
         super().__init__()
@@ -141,7 +141,7 @@ class PersonalizedEmotionViT(nn.Module):
             }
 
 
-# --- 3. LEARNING SYSTEM ---
+#   3. LEARNING SYSTEM  
 class InteractiveLearningSystem:
     def __init__(self, model: PersonalizedEmotionViT, storage_path="./memory/cara_personal_data"):
         self.model = model
@@ -149,18 +149,7 @@ class InteractiveLearningSystem:
         self.storage_path.mkdir(parents=True, exist_ok=True)
         self.processor = self.model.processor
 
-  #  def save_labeled_sample(self, frame_bgr, label):
-    #    ts = datetime.now()
-    #    filename = ts.strftime("%Y%m%d_%H%M%S_%f")
-#
-    #    img_path = self.storage_path / f"{filename}.jpg"
-    #    meta_path = self.storage_path / f"{filename}.json"
-
-    #    cv2.imwrite(str(img_path), frame_bgr)
-    #    meta = {"true_emotion": label, "timestamp": ts.isoformat()}
-     #   with open(meta_path, "w") as f:
-   #         json.dump(meta, f)
-
+  
     def save_labeled_sample(self, frame_bgr, label):
         ts = datetime.now()
         # Add a short random ID (first 4 chars of a UUID) to ensure uniqueness
@@ -284,7 +273,7 @@ class InteractiveLearningSystem:
             print(f"Not enough data to train (Found {len(samples)} samples). Needs ~8.")
             return False, None
 
-# --- 1. Chronological Split (Train on Past, Test on Today) ---
+#   1. Chronological Split (Train on Past, Test on Today)  
         groups = [s["group"] for s in samples]
         unique_groups = sorted(list(set(groups))) # Sort dates: ['2025-10-01', '2025-10-02', ...]
 
@@ -297,7 +286,7 @@ class InteractiveLearningSystem:
             train_idx = [i for i, g in enumerate(groups) if g != latest_day]
             val_idx = [i for i, g in enumerate(groups) if g == latest_day]
         else:
-            # Fallback: If this is your very first day, just split randomly
+            # Fallback: If this is very first day, just split randomly
             print("Only one session found. Using standard random split.")
             gss = GroupShuffleSplit(n_splits=1, test_size=val_ratio, random_state=42)
             train_idx, val_idx = next(gss.split(samples, groups=groups))
@@ -307,14 +296,14 @@ class InteractiveLearningSystem:
 
         print(f"Training on {len(train_s)} samples, Validating on {len(val_s)} samples.")
         
-        # --- 2. Datasets (Augment Train only) ---
+        # 2. Datasets (Augment Train only) 
         train_ds = PersonalEmotionDataset(train_s, self.model.emotion_names, self.processor, augment=True)
         val_ds = PersonalEmotionDataset(val_s, self.model.emotion_names, self.processor, augment=False)
 
         train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
         val_dl = DataLoader(val_ds, batch_size=batch_size, shuffle=False) if val_s else None
 
-        # --- 3. Optimizer setup ---
+        #  3. Optimizer setup 
         # Note: We used self.adapter in the class above, so we optimize that
         params = list(self.model.adapter.parameters()) + \
                  list(self.model.emotion_head.parameters()) + \
@@ -324,7 +313,7 @@ class InteractiveLearningSystem:
         optimizer = torch.optim.AdamW(params, lr=lr, weight_decay=weight_decay)
         device = next(self.model.parameters()).device
 
-        # --- 4. Loop ---
+        # 4. Loop  
         best_state = None
         best_acc = -1.0
         bad_epochs = 0
@@ -365,7 +354,7 @@ class InteractiveLearningSystem:
             else:
                 print(f"Epoch {epoch:02d}: Loss={avg_loss:.4f} (No val set)")
 
-        # --- 5. Finish ---
+        #  5. Finish 
         if best_state is not None:
             self.model.load_state_dict(best_state)
             print(f"Restored best model (Val Acc: {best_acc:.3f})")

@@ -12,7 +12,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
+        (os.path.join('share', package_name, 'launch'), glob('launch/*.py')),
         # THIS NEW LINE COPIES THE MODELS:
         (os.path.join('share', package_name, 'models'), glob('models/*.onnx')),
     ],
@@ -28,7 +28,7 @@ setup(
             'emotion_node = cara_vision_control.cara_emotion_node:main',
             'servo_pca9685 = cara_vision_control.cara_servo_pca9685_node:main',
             'arduino_bridge_node = cara_vision_control.arduino_bridge_node:main',
-            'face_yunet = cara_vision_control.face_yunet_node:main',
+            'face_yunet_node = cara_vision_control.face_yunet_node:main',
         ],
     },
 )

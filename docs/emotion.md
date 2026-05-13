@@ -312,6 +312,8 @@ ros2 run v4l2_camera v4l2_camera_node --ros-args \
   -p output_encoding:=rgb8
 ```
 
+check device info
+```v4l2-ctl --list-devices```
 **Then in another terminal:**
 ```		
 ros2 topic echo /image_raw
@@ -349,6 +351,10 @@ source /opt/ros/humble/setup.bash
 cd /workspace/ros2_ws
 source install/setup.bash
 
+
+apt-get update
+apt-get install ros-humble-rqt-image-view
+
 ros2 run rqt_image_view rqt_image_view
 ```
 a window will pop up. in the dropdown choose /image_raw or whatever image topic you set to your launch.  
@@ -370,7 +376,7 @@ distortion_coefficients:
   data: [-0.526530, 0.302742, -0.014834, -0.000457, 0.000000]
 rectification_matrix:
   rows: 3
-  cols: 3
+  cols: 3y
   data: [1., 0., 0.,
          0., 1., 0.,
          0., 0., 1.]
@@ -435,7 +441,7 @@ Now we have a full loop. Here is how you use it:
     source install/setup.bash
     ros2 run cara_vision_control emotion_node
    ```
-
+Open a terminal and run ros2 topic hz /cara/face_crop. If it says "no new messages", the face detector isn't outputting anything to begin with.
 
 ##### 7.1.0 Collect Samples: Make a happy face and run:
    

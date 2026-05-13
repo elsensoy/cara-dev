@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import Image
 from std_msgs.msg import String, Bool
 from cv_bridge import CvBridge
@@ -29,7 +30,8 @@ class CaraEmotionNode(Node):
         self.get_logger().info(f"Model loaded on {self.device}")
 
         #  2. Subscribers  
-        self.sub = self.create_subscription(Image, '/cara/face_crop', self.process_face, 10)
+        # Use qos_profile_sensor_data instead of 10
+        self.sub = self.create_subscription(Image, '/cara/face_crop', self.process_face, qos_profile_sensor_data)
         self.sub_feedback = self.create_subscription(String, '/cara/feedback', self.handle_feedback, 10)
         self.sub_train = self.create_subscription(Bool, '/cara/train', self.handle_train, 10)
 
@@ -60,6 +62,7 @@ class CaraEmotionNode(Node):
             result = self.model.predict_frame(frame_bgr)
             
             if result is None:
+                self.get_logger().info("Model returned None (Skipping frame)")
                 return
 
             label = result['primary_emotion'].strip().lower()
